@@ -2,34 +2,50 @@ package enviando.email;
 
 import org.junit.jupiter.api.Test;
 
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 public class App {
+
+    private String userName = "tjava4720@gmail.com" ;
+    private String senha = "k n z v k s q i u l d l e g t o";
 
     @Test
     public void testeEmail(){
         /*SMTP - protocolo padrão para envio de E-mail*/
 
-        Properties properties = new Properties();
-        /*autorização*/
-        properties.put("mail.smtp.auth", "true");// Hash Map, contém chave e valor / key, value
+        Properties properties = new Properties();//Armazena pares chave-valor de configuração
 
-        /*Autenticação*/
-        properties.put("mail.smtp.starttls", "true"); // Garantiar a segurança da conexão entre a aplicação
+        try {
+            properties.put("mail.smtp.auth", "true");/*autorização*/
+            properties.put("mail.smtp.starttls", "true");/*Autenticação*/
+            properties.put("mail.smtp.host", "smtp.gmail.com");/*Servidor Gmail Google*/
+            properties.put("mail.smtp.port", "465");/*Porta do servidor*/
+            properties.put("mail.smtp.socketFactory.port", "465");/*Especifica se a porta a ser conectada pelo socket*/
+            properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");/*Clase socket de conecão ao SMTP*/
 
-        /*Servidor Gmail Google*/
-        properties.put("mail.smtp.host.", "smtp.gmail.com");//Enviar os e-mails através do servidor de envio de e-mails do Gmail.
+            Session session = Session.getInstance(properties, new Authenticator() {//Cria uma sessão de e-mail autenticada,
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(userName, senha);
+                }
+            });
 
-        /*Porta do servidor*/
-        properties.put("mail.smtp.port", "465");//Caminho do servidor / A porta de rede usada para se conectar ao servidor de envio de e-mails (SMTP).
+            Address[] toUser = InternetAddress.parse("tjava4720@gmail.com");//estabelecer os destinatários
 
-        /*Especifica se a porta a ser conectada pelo socket*/
-        properties.put("mail.smtp.socketFactory.port", "465");// Define a porta 465 para conexões SMTP
+            Message mensagem = new MimeMessage(session);// enviar a mensagem
+            mensagem.setFrom(new InternetAddress(userName));// Quem está enviando
+            mensagem.setRecipients(Message.RecipientType.TO, toUser);// e-mail de destino
+            mensagem.setSubject("Chegou o e-mail enviado com java!");//Assunto do e-mail
+            mensagem.setText("olá programador, você acaba de receber  um  e-mail enviado com java!");//Corpo do e-mail
 
-        /*Clase socket de conecão ao SMTP*/
-        properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-        
+            Transport.send(mensagem);
 
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
     }
-
 }
