@@ -24,7 +24,7 @@ public class ObjetoEnviaEmail {
         this.textoEmail = textoEmail;
     }
 
-    public void  EnviarEmail()throws Exception{
+    public void  EnviarEmail(Boolean envioHtml)throws Exception{
 
         Properties properties = new Properties();//Armazena pares chave-valor de configuração
 
@@ -49,7 +49,12 @@ public class ObjetoEnviaEmail {
         mensagem.setFrom(new InternetAddress(userName, nomeRemetente));// Quem está enviando
         mensagem.setRecipients(Message.RecipientType.TO, toUser);// e-mail de destino
         mensagem.setSubject(assuntoEmail);//Assunto do e-mail
-        mensagem.setText(textoEmail);//Corpo do e-mail
+
+        if(envioHtml){
+            mensagem.setContent(textoEmail, "text/html; charset=utf-8" );//Conteúdo e tipo
+        }else {
+            mensagem.setText(textoEmail);//Corpo do e-mail
+        }
 
         Transport.send(mensagem);
 
