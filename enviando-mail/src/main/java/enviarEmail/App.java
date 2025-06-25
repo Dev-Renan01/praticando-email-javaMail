@@ -23,7 +23,7 @@ public class App {
                 , "Testando e-mail com java"
                 ,stringBuilderEmail.toString());
 
-        enviaEmail.EnviarEmail(true);
+        enviaEmail.EnviarEmailAnexo(true);
 
 
        Thread.sleep(5000);

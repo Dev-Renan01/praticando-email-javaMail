@@ -15,6 +15,8 @@ import javax.mail.util.ByteArrayDataSource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public class ObjetoEnviaEmail {
@@ -109,16 +111,30 @@ public class ObjetoEnviaEmail {
             corpoEmail.setText(textoEmail);//Corpo do e-mail
         }
 
-        //Parte 02 do e-mail que são os anexos em PDF
-        MimeBodyPart anexoEmail = new MimeBodyPart();
-
-        anexoEmail.setDataHandler(new DataHandler(new ByteArrayDataSource(simuladorDePDF(), "Application/pdf")));
-        anexoEmail.setFileName("Anexoemail.pdf");
+        //Lista de arquivos
+        List<FileInputStream> arquivos = new ArrayList<>();
+        arquivos.add(simuladorDePDF());//Certificado
+        arquivos.add(simuladorDePDF());//arquivo de texto
+        arquivos.add(simuladorDePDF());//Nota fiscal
+        arquivos.add(simuladorDePDF());//Imagem
 
 
         Multipart multipart = new MimeMultipart();
         multipart.addBodyPart(corpoEmail);
-        multipart.addBodyPart(anexoEmail);
+
+        int index = 0;
+        for(FileInputStream pdf : arquivos){
+
+            //Parte 02 do e-mail que são os anexos em PDF
+            MimeBodyPart anexoEmail = new MimeBodyPart();
+
+            anexoEmail.setDataHandler(new DataHandler(new ByteArrayDataSource(pdf, "Application/pdf")));
+            anexoEmail.setFileName("Anexoemail" + index + ".pdf");
+
+            multipart.addBodyPart(anexoEmail);
+
+            index++;
+        }
 
         mensagem.setContent(multipart);
 
